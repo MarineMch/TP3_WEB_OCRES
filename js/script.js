@@ -4,28 +4,57 @@ function start() {
   // Création de l'objet apiWeather
   const apiWeather = new API_WEATHER(city);
   // Appel de la fonction fetchTodayForecast
-  
   apiWeather
-  .fetchTodayForecast()
-  .then(function(response) {
-  // Récupère la donnée d'une API
-  const data = response.data;
   
-  // On récupère l'information principal
-  const main = data.weather[0].main;
-  const description = data.weather[0].description;
-  const temp = data.main.temp;
-  const icon = apiWeather.getHTMLElementFromIcon(data.weather[0].icon);
-  
-  // Modifier le DOM
-  document.getElementById('today-forecast-main').innerHTML = main;
-  document.getElementById('today-forecast-more-info').innerHTML = description;
-  document.getElementById('icon-weather-container').innerHTML = icon;
-  document.getElementById('today-forecast-temp').innerHTML = `${temp}°C`;
-  
-  })
-  .catch(function(error) {
-  // Affiche une erreur
-  console.error(error);
-  });
- }
+    .fetchTodayForecast()
+    .then(function (response) {
+      // Récupère la donnée d'une API
+      const data = response.data;
+      // On récupère l'information principal
+      const main = data.weather[0].main;
+      const description = data.weather[0].description;
+      const temp = data.main.temp;
+      const icon = apiWeather.getHTMLElementFromIcon(data.weather[0].icon);
+      // Modifier le DOM
+      document.getElementById('today-forecast-main').innerHTML = main;
+      document.getElementById('today-forecast-more-info').innerHTML = description;
+      document.getElementById('icon-weather-container').innerHTML = icon;
+      document.getElementById('today-forecast-temp').innerHTML = `${temp}°C`;
+    })
+
+    .catch(function (error) {
+      // Affiche une erreur
+      console.error(error);
+    });
+
+}
+
+function getThreeDayForecast() {
+  const ville = document.getElementById("city-input").value;
+  const apiWeather = new API_WEATHER(ville); //on envoie la ville entrée par l'utilisateur
+
+  apiWeather
+    .fetchTodayForecast()
+    .then(function (response) {
+
+      const data = response.data;
+
+      let i;
+      for (i = 0; i < 4; i++) {
+        const main = data.list[i].weather[0].main; //temps principal
+        const description = data.list[i].weather[0].description; //description
+        const temp = data.list[i].temp.day; //température
+        const icon = apiWeather.getHTMLElementFromIcon(data.list[i].weather[0].icon); //icone météo
+        document.querySelectorAll('#today-forecast-main')[i].innerHTML = main;
+        document.querySelectorAll('#today-forecast-more-info')[i].innerHTML = description;
+        document.querySelectorAll('#icon-weather-container')[i].innerHTML = icon;
+        document.querySelectorAll('#today-forecast-temp')[i].innerHTML = `${temp}°C`;
+      }
+    })
+    .catch(function (error) {
+      // Affiche une erreur
+      console.error(error);
+    });
+
+  return city;
+}
